@@ -4,6 +4,11 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+#include <fstream>
+#include<algorithm>
+#include <cstring>
+
 #include "process.h"
 #include "processor.h"
 #include "system.h"
@@ -20,16 +25,80 @@ Processor& System::Cpu() { return cpu_; }
 vector<Process>& System::Processes() { return processes_; }
 
 // TODO: Return the system's kernel identifier (string)
-std::string System::Kernel() { return string(); }
+std::string System::Kernel() 
+{
+  std::ifstream version_file("/proc/version"); 
+  std::string version_name = "";
+  while(version_file.good())
+  {
+    std::string line;
+    while(std::getline(version_file, line))
+    {
+      int version_quote  = line.find("version");
+      int version_bracket_quote = line.find("(");
+      version_name = line.substr(version_quote, version_bracket_quote - version_quote);
+    }
+  }
+
+  return version_name; 
+}
 
 // TODO: Return the system's memory utilization
-float System::MemoryUtilization() { return 0.0; }
+float System::MemoryUtilization() 
+{
+  std::ifstream version_file("/proc/meminfo");
+  float totalMemory = 0, freeMemory = 0;
+  while(version_file.good())
+  {
+    std::string line;
+    while(std::getline(version_file, line))
+    {
+      if(line.find("MemTotal") == 0 || line.find("MemFree") == 0)
+      {
+        int colon_quote = line.find(":");
+        int kb_quote = line.find("kB");
+        std::string memString = line.substr(colon_quote + 1,kb_quote - colon_quote - 1);
+        memString.erase(remove_if(memString.begin(), memString.end(), isspace), memString.end());
+        
+        char * cstr = new char [memString.length()+1];
+        std::strcpy (cstr, memString.c_str());
+        
+        if(totalMemory < 1.0)
+          totalMemory = atof(cstr);
+        else
+          freeMemory = atof(cstr);
+      }
+    }
+  }
+
+  return ((totalMemory - freeMemory)/totalMemory) * 100.0;
+}
 
 // TODO: Return the operating system name
-std::string System::OperatingSystem() { return string(); }
+std::string System::OperatingSystem() 
+{
+  std::ifstream version_file("/etc/os-release");
+  std::string OS_name;
+  while(version_file.good())
+  {
+    std::string line;
+    std::getline(version_file, line);
+    if(line.find("PRETTY") != std::string::npos)
+    {
+      int f_quote = line.find("\"");
+      int s_quote = line.find_last_of("\"");
+      OS_name = line.substr(f_quote+1,s_quote - f_quote - 1);
+    }
+  }
+  
+  return OS_name;
+}
 
 // TODO: Return the number of processes actively running on the system
-int System::RunningProcesses() { return 0; }
+int System::RunningProcesses() 
+{ 
+  return 0; 
+}
 
 // TODO: Return the total number of processes on the system
 int System::TotalProcesses() { return 0; }
