@@ -9,9 +9,11 @@
 #include<algorithm>
 #include <cstring>
 
+#include "linux_parser.h"
 #include "process.h"
 #include "processor.h"
 #include "system.h"
+
 
 using std::set;
 using std::size_t;
@@ -27,21 +29,7 @@ vector<Process>& System::Processes() { return processes_; }
 // TODO: Return the system's kernel identifier (string)
 std::string System::Kernel() 
 {
-  std::ifstream version_file("/proc/version"); 
-  std::string version_name = "";
-  while(version_file.good())
-  {
-    std::string line;
-    while(std::getline(version_file, line))
-    {
-      int version_quote  = line.find("version");
-      int version_bracket_quote = line.find("(");
-      version_name = line.substr(version_quote, version_bracket_quote - version_quote);
-      version_name.erase(remove_if(version_name.begin(), version_name.end(), isspace), version_name.end());
-    }
-  }
-
-  return version_name; 
+  return LinuxParser::Kernel(); 
 }
 
 // TODO: Return the system's memory utilization
@@ -78,22 +66,7 @@ float System::MemoryUtilization()
 // TODO: Return the operating system name
 std::string System::OperatingSystem() 
 {
-  std::ifstream version_file("/etc/os-release");
-  std::string OS_name;
-  while(version_file.good())
-  {
-    std::string line;
-    std::getline(version_file, line);
-    if(line.find("PRETTY") != std::string::npos)
-    {
-      int f_quote = line.find("\"");
-      int s_quote = line.find_last_of("\"");
-      OS_name = line.substr(f_quote+1,s_quote - f_quote - 1);
-      OS_name.erase(remove_if(OS_name.begin(), OS_name.end(), isspace), OS_name.end());
-    }
-  }
-  
-  return OS_name;
+  return LinuxParser::OperatingSystem();
 }
 
 // TODO: Return the number of processes actively running on the system
