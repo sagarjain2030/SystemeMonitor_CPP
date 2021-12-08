@@ -5,13 +5,73 @@
 #include <cstring>
 
 
-int main()
-{
+//  int main()
+//  {
+//    std::ifstream data_file("/proc/uptime");
+//    double system_uptime;
+//    while(data_file.good())
+//    {
+//      std::string line;
+//       while(std::getline(data_file, line))
+//        {
+//         std::cout<<line<<std::endl;
+//         double end_of_uptime= line.find(" ");
+//         std::string uptime_string = line.substr(0, line.find(" "));
+//         std::cout<<uptime_string<<std::endl;
+        
+//         char* uptime_string_char = new char[uptime_string.length()+1];
+//         std::strcpy (uptime_string_char, uptime_string.c_str());
+//         system_uptime = atof(uptime_string_char);
+//       }
+//    }
+
+//    return system_uptime;
+//  }
+
+// int main()
+// {
+//   std::ifstream data_file("/proc/stat");
+//   double running_process;
+//   while(data_file.good())
+//   {
+//     std::string line;
+//     while(std::getline(data_file, line))
+//      {
+//        if(line.find("procs_running") == 0)
+//        {
+//          std::string running_process_String = line.substr(line.find(" ") + 1, line.length() - line.find(" "));
+//          char* run_process_string = new char[process_String.length()+1];
+//          std::strcpy (run_process_string, running_process_String.c_str());
+//          running_process = atof(run_process_string); 
+//        }
+//      }
+//   }
   
-  return 0;
-}
+//   return running_process;
+// }
 
 
+// int main()
+// {
+//   std::ifstream data_file("/proc/stat");
+//   double total_process;
+//   while(data_file.good())
+//   {
+//     std::string line;
+//      while(std::getline(data_file, line))
+//      {
+//        if(line.find("processes") == 0)
+//        {
+//          std::string process_String = line.substr(line.find(" ") + 1, line.length() - line.find(" "));
+//          char* tot_process_string = new char[process_String.length()+1];
+//          std::strcpy (tot_process_string, process_String.c_str());
+//          total_process = atof(tot_process_string); 
+//        }
+//      }
+//   }
+  
+//   return total_process;
+// }
 
 // int main()
 // {

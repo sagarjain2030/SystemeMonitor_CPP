@@ -37,6 +37,7 @@ std::string System::Kernel()
       int version_quote  = line.find("version");
       int version_bracket_quote = line.find("(");
       version_name = line.substr(version_quote, version_bracket_quote - version_quote);
+      version_name.erase(remove_if(version_name.begin(), version_name.end(), isspace), version_name.end());
     }
   }
 
@@ -88,6 +89,7 @@ std::string System::OperatingSystem()
       int f_quote = line.find("\"");
       int s_quote = line.find_last_of("\"");
       OS_name = line.substr(f_quote+1,s_quote - f_quote - 1);
+      OS_name.erase(remove_if(OS_name.begin(), OS_name.end(), isspace), OS_name.end());
     }
   }
   
@@ -97,11 +99,69 @@ std::string System::OperatingSystem()
 // TODO: Return the number of processes actively running on the system
 int System::RunningProcesses() 
 { 
-  return 0; 
+    std::ifstream data_file("/proc/stat");
+  double running_process;
+  while(data_file.good())
+  {
+    std::string line;
+    while(std::getline(data_file, line))
+     {
+       if(line.find("procs_running") == 0)
+       {
+         std::string running_process_String = line.substr(line.find(" ") + 1, line.length() - line.find(" "));
+         running_process_String.erase(remove_if(running_process_String.begin(), running_process_String.end(), isspace), running_process_String.end());
+         char* run_process_string = new char[running_process_String.length()+1];
+         std::strcpy (run_process_string, running_process_String.c_str());
+         running_process = atof(run_process_string); 
+       }
+     }
+  }
+  
+  return running_process;
 }
 
 // TODO: Return the total number of processes on the system
-int System::TotalProcesses() { return 0; }
+int System::TotalProcesses() 
+{ 
+  std::ifstream data_file("/proc/stat");
+  double total_process;
+  while(data_file.good())
+  {
+    std::string line;
+     while(std::getline(data_file, line))
+     {
+       if(line.find("processes") == 0)
+       {
+         std::string process_String = line.substr(line.find(" ") + 1, line.length() - line.find(" "));
+         process_String.erase(remove_if(process_String.begin(), process_String.end(), isspace), process_String.end());
+         char* tot_process_string = new char[process_String.length()+1];
+         std::strcpy (tot_process_string, process_String.c_str());
+         total_process = atof(tot_process_string); 
+       }
+     }
+  }
+  
+  return total_process;
+}
 
 // TODO: Return the number of seconds since the system started running
-long int System::UpTime() { return 0; }
+long int System::UpTime() 
+{ 
+   std::ifstream data_file("/proc/uptime");
+   double system_uptime;
+   while(data_file.good())
+   {
+     std::string line;
+      while(std::getline(data_file, line))
+       {
+        std::string uptime_string = line.substr(0, line.find(" "));
+        uptime_string.erase(remove_if(uptime_string.begin(), uptime_string.end(), isspace), uptime_string.end());
+        
+        char* uptime_string_char = new char[uptime_string.length()+1];
+        std::strcpy (uptime_string_char, uptime_string.c_str());
+        system_uptime = atof(uptime_string_char);
+      }
+   }
+
+   return system_uptime; 
+}
